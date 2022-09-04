@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Технологии{% endblock %}
+{% load static %}
+{% block content %}
+  <div class="row">
+    <h1>Вот что я умею</h1>
+    <aside class="col-12 col-md-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+          Python
+        </li>
+        <li class="list-group-item">
+          Django
+        </li>
+        <li class="list-group-item">
+          Java Script (Базовый)
+        </li>
+        <li class="list-group-item">
+          HTML
+        </li>
+        <li class="list-group-item">
+          Css / Scss (Базовый)
+        </li>
+        <li class="list-group-item">
+          SQL
+        </li>
+        <li class="list-group-item">
+          Markdown
+        </li>
+      </ul>
+    </aside>
+    <article class="col-12 col-md-9">
+      <p>Мой основной инструмент разработки - PyCharm</p>
+      <h2>И вот так я вижу своё собеседование</h2>
+      <video src="{% static 'img/tech/мем питон.mp4' %} " controls
+             height="500px"></video>
+    </article>
+  </div>
+{% endblock %}

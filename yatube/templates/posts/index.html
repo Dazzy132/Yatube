@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static cache %}
+
+{% block heading %}Последние обновления на сайте{% endblock %}
+
+{% block content %}
+  {% include 'includes/switcher.html' %}
+  {% comment %}
+  При переходе на 2ю страницу остается контент первой.
+  Как исправить это?
+  {% endcomment %}
+  {% cache 20 index_page %}
+    {% for post in page_obj %}
+      {% include 'posts/post_card.html' %}
+    {% endfor %}
+  {% endcache %}
+
+  {% include 'includes/pagitanor.html' %}
+{% endblock content %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профайл пользователя
+  {% if author.get_full_name %}
+    {{ author.get_full_name  }}
+  {% else %}
+    {{ author }}
+  {% endif %}
+{% endblock title %}
+
+{% block heading %}Все посты пользователя
+  {% if author.get_full_name %}
+    {{ author.get_full_name  }}
+  {% else %}
+    {{ author }}
+  {% endif %}
+{% endblock heading %}
+
+{% block content %}
+  <h3>Всего постов: {{ post_list.count }} </h3>
+  {% if request.user.get_username == author.username %}
+
+  {% else %}
+  <div class="mb-5">
+    {% if following %}
+      <a class="btn btn-lg btn-light" href="{% url 'posts:profile_unfollow' author.username %}" role="button">Отписаться</a>
+    {% else %}
+      <a class="btn btn-lg btn-primary" href="{% url 'posts:profile_follow' author.username %}" role="button">Подписаться</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% for post in page_obj %}
+    {% include 'posts/post_card.html' %}
+  {% endfor %}
+
+  {% include 'includes/pagitanor.html' %}
+{% endblock content %}
+
+

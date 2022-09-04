@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static cache %}
+
+{% block heading %}Избранные авторы: {% endblock %}
+
+{% block content %}
+    {% for post in page_obj %}
+      {% include 'posts/post_card.html' %}
+    {% endfor %}
+
+  {% include 'includes/pagitanor.html' %}
+{% endblock content %}
