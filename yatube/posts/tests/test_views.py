@@ -8,7 +8,6 @@ from django.core.paginator import Page
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
-from posts.models import Post
 from posts.tests.fixtures.fixtures_data import (create_group, create_post,
                                                 create_post_with_group,
                                                 few_posts_with_group)

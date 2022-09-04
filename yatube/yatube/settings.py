@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     # pip install sorl-thumbnail
     'sorl.thumbnail',
     # Конец регистрации пакетов
-    
     # Регистрация приложений
     'posts.apps.PostsConfig',
     'users.apps.UsersConfig',

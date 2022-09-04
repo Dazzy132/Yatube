@@ -1,6 +1,4 @@
 from django.urls import path
-from django.views.decorators.cache import cache_page
-
 from . import views
 
 # namespace
@@ -17,6 +15,7 @@ urlpatterns = [
 
 
     path('', views.IndexView.as_view(), name='index'),
+    # django.views.decorators.cache import cache_page
     # path('', cache_page(5)(views.IndexView.as_view()), name='index'),
     path('group/<slug:slug>/',
          views.GroupPostView.as_view(), name='group_list'),
