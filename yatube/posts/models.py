@@ -1,10 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.urls import reverse
 
 from core.models import CreatedModel
-
-# from django.urls import reverse
-
 
 User = get_user_model()
 
@@ -68,8 +66,7 @@ class Post(models.Model):
         return self.text[:self.MAX_LENGTH]
 
     def get_absolute_url(self):
-        return f'/posts/{self.pk}'
-        # return reverse('posts:post_detail', kwargs={'post_id': self.pk})
+        return reverse('posts:post_detail', kwargs={'post_id': self.pk})
 
     class Meta:
         verbose_name = 'Пост'

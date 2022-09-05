@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.core.paginator import Paginator
 
-LIMIT_POSTS_PER_PAGE = 10
-
 
 def paginate_queryset(request, queryset):
     """Функция, которая делает пагинацию страниц"""
@@ -15,4 +13,4 @@ def paginate_queryset(request, queryset):
 class DataMixin:
     """Миксин, который наследуется во views.py, чтобы не задавать постоянно
     одни и те же параметры пагинации"""
-    paginate_by = LIMIT_POSTS_PER_PAGE
+    paginate_by = settings.MAX_SHOW_POSTS
