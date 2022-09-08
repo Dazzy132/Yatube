@@ -18,8 +18,6 @@ class IndexView(DataMixin, ListView):
     """Главная страница написанная на CBV."""
     model = Post
     template_name = 'posts/index.html'
-    # context_object_name не обязательно указывать. paginate_by создает объект
-    # page_obj, из которого берется контекст для страницы
 
     def get_queryset(self):
         return Post.objects.select_related('group', 'author')
@@ -136,9 +134,8 @@ class FollowIndexView(DataMixin, LoginRequiredMixin, ListView):
     template_name = 'posts/follow.html'
 
     def get_queryset(self):
-        return Post.objects.filter(
-            author__in=self.request.user.follower.all().values('author')
-        ).select_related('group', 'author')
+        # Обращение к модели User, к завязанной модели Follow, полю подписчика
+        return Post.objects.filter(author__following__user=self.request.user)
 
 
 class ProfileFollowView(LoginRequiredMixin, View):
