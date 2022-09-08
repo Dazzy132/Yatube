@@ -8,11 +8,13 @@
     <img class="card-img my-2" src="{{ im.url }}" alt="Картинка не загрузилась">
   {% endthumbnail %}
   <p>{{ post.text }}</p>
-  <a href="{% url 'posts:post_detail' post.pk %}">подробная информация </a>
+{#  <a href="{% url 'posts:post_detail' post.pk %}">подробная информация </a>#}
+  <a href="{{ post.get_absolute_url }}">подробная информация </a>
 </article>
 
 {% if not group and post.group %}
-  <a href="{% url 'posts:group_list' post.group.slug %}">все
+{#  <a href="{% url 'posts:group_list' post.group.slug %}">все#}
+  <a href="{{ post.group.get_absolute_url }}">все
     записи группы</a>
 {% endif %}
 

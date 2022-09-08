@@ -1,10 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from http import HTTPStatus
+
+from django.views.generic.list import MultipleObjectMixin
 
 from .forms import CommentForm, PostForm
 from .models import Follow, Group, Post, User
@@ -19,21 +22,20 @@ class IndexView(DataMixin, ListView):
     # page_obj, из которого берется контекст для страницы
 
     def get_queryset(self):
-        return Post.objects.select_related('group', 'author').distinct()
+        return Post.objects.select_related('group', 'author')
 
 
-class GroupPostView(DataMixin, ListView):
+class GroupPostView(DataMixin, DetailView, MultipleObjectMixin):
     """Отображение постов по группам"""
-    model = Post
+    model = Group
     allow_empty = False
     template_name = 'posts/group_list.html'
 
-    def get_queryset(self):
-        return Post.objects.filter(group__slug=self.kwargs['slug'])
-
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['group'] = Group.objects.get(slug=self.kwargs['slug'])
+        object_list = (Post.objects
+                       .filter(group=self.get_object())
+                       .select_related('author'))
+        context = super().get_context_data(object_list=object_list, **kwargs)
         return context
 
 
@@ -47,7 +49,7 @@ class ProfileView(DataMixin, ListView):
         return (
             Post.objects
             .filter(author__username=self.kwargs['username'])
-            .select_related('group')
+            .select_related('group', 'author')
         )
 
     def get_context_data(self, **kwargs):
@@ -57,7 +59,7 @@ class ProfileView(DataMixin, ListView):
         if self.request.user.is_authenticated:
             context['following'] = Follow.objects.filter(
                 user=self.request.user, author=username
-            )
+            ).select_related('author', 'user')
         return context
 
 
@@ -72,7 +74,7 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         post = get_object_or_404(Post, pk=self.kwargs['post_id'])
         context['form'] = CommentForm()
-        context['comments'] = post.comments.all()
+        context['comments'] = post.comments.select_related('author')
         return context
 
 
@@ -101,7 +103,7 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         """Проверка на то, что только автор может редактировать"""
         post = self.get_object()
         if not post.author == self.request.user:
-            return HttpResponse(status=302)
+            return HttpResponse(status=HTTPStatus.NOT_FOUND)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -110,10 +112,8 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         return context
 
     def get_success_url(self):
-        # return redirect('posts:post_detail', self.kwargs['post_id'])
-        return '{}'.format(
-            reverse('posts:post_detail',
-                    kwargs={'post_id': self.kwargs['post_id']}))
+        return reverse('posts:post_detail',
+                       kwargs={'post_id': self.kwargs['post_id']})
 
 
 class AddCommentView(LoginRequiredMixin, CreateView):
@@ -138,7 +138,7 @@ class FollowIndexView(DataMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Post.objects.filter(
             author__in=self.request.user.follower.all().values('author')
-        )
+        ).select_related('group', 'author')
 
 
 class ProfileFollowView(LoginRequiredMixin, View):
@@ -146,14 +146,10 @@ class ProfileFollowView(LoginRequiredMixin, View):
 
     def get(self, request, username):
         author = get_object_or_404(User, username=username)
-        # Какую лучше применить ошибку, если пользователь пытается делать
-        # такие действия? Знаю только редирект
         if request.user.username == username:
-            return redirect('posts:profile', username=author)
-        if Follow.objects.filter(
-                user=request.user, author=author).exists():
-            return redirect('posts:profile', username=author)
-        Follow.objects.create(user=request.user, author=author).save()
+            messages.error(request, 'Вы не можете подписываться сам на себя')
+            return HttpResponseBadRequest()
+        Follow.objects.get_or_create(user=request.user, author=author)
         messages.success(request, f'Вы успешно подписались на {author}')
         return redirect('posts:profile', username=author)
 

@@ -9,7 +9,7 @@
   При переходе на 2ю страницу остается контент первой.
   Как исправить это?
   {% endcomment %}
-  {% cache 20 index_page %}
+  {% cache 20 index_page page_obj.number %}
     {% for post in page_obj %}
       {% include 'posts/post_card.html' %}
     {% endfor %}

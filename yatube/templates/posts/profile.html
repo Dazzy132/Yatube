@@ -19,9 +19,7 @@
 
 {% block content %}
   <h3>Всего постов: {{ post_list.count }} </h3>
-  {% if request.user.get_username == author.username %}
-
-  {% else %}
+  {% if not request.user.get_username == author.username %}
   <div class="mb-5">
     {% if following %}
       <a class="btn btn-lg btn-light" href="{% url 'posts:profile_unfollow' author.username %}" role="button">Отписаться</a>
@@ -37,5 +35,3 @@
 
   {% include 'includes/pagitanor.html' %}
 {% endblock content %}
-
-
