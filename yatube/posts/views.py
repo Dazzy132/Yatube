@@ -103,7 +103,7 @@ class PostEditView(LoginRequiredMixin, UpdateView):
         """Проверка на то, что только автор может редактировать"""
         post = self.get_object()
         if not post.author == self.request.user:
-            return HttpResponse(status=HTTPStatus.NOT_FOUND)
+            return HttpResponse(status=HTTPStatus.FOUND)
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
