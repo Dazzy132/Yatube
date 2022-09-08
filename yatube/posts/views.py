@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -5,8 +7,6 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
-from http import HTTPStatus
-
 from django.views.generic.list import MultipleObjectMixin
 
 from .forms import CommentForm, PostForm
