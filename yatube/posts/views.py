@@ -134,7 +134,6 @@ class FollowIndexView(DataMixin, LoginRequiredMixin, ListView):
     template_name = 'posts/follow.html'
 
     def get_queryset(self):
-        # Обращение к модели User, к завязанной модели Follow, полю подписчика
         return Post.objects.filter(author__following__user=self.request.user)
 
 
