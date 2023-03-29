@@ -134,6 +134,10 @@ class FollowIndexView(DataMixin, LoginRequiredMixin, ListView):
     template_name = 'posts/follow.html'
 
     def get_queryset(self):
+        # 1) Ищется пользователь с заданным именем __user = request.user
+        # 2) Для него ищутся объекты с Follow, которые на него ссылаются
+        # 3) Для найденных записей в Follow ищутся связанные с ним авторы
+        # 4) Далее ищутся посты связанные с найденными авторами
         return Post.objects.filter(author__following__user=self.request.user)
 
 
