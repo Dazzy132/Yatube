@@ -7,6 +7,18 @@ from core.models import CreatedModel
 User = get_user_model()
 
 
+class AuthorRelated(models.Model):
+    """Модель для наследования поля Автора"""
+    author = models.ForeignKey(
+        User,
+        verbose_name='Автор',
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        abstract = True
+
+
 class Group(models.Model):
     """Группа поста"""
     title = models.CharField(
@@ -21,7 +33,6 @@ class Group(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        # return f'/group/{self.slug}'
         return reverse('posts:group_list', kwargs={'slug': self.slug})
 
     class Meta:
@@ -29,7 +40,7 @@ class Group(models.Model):
         verbose_name_plural = 'Группы'
 
 
-class Post(models.Model):
+class Post(AuthorRelated):
     """Модель постов"""
     MAX_LENGTH = 15
 
@@ -41,27 +52,15 @@ class Post(models.Model):
         'Дата публикации',
         auto_now_add=True
     )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='posts',
-        verbose_name='Автор'
-    )
     group = models.ForeignKey(
         Group,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
-        related_name='posts',
         verbose_name='Группа',
         help_text='Группа, к которой будет относиться пост'
     )
-    image = models.ImageField(
-        'Картинка',
-        # upload_to='posts/%Y/%m/%d/'
-        upload_to='posts/',
-        blank=True,
-    )
+    image = models.ImageField('Картинка', upload_to='posts/', blank=True)
 
     def __str__(self):
         return self.text[:self.MAX_LENGTH]
@@ -72,25 +71,23 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
+        default_related_name = 'posts'
         ordering = ('-pub_date',)
 
 
-class Comment(CreatedModel):
+class Comment(AuthorRelated, CreatedModel):
     """Комментарии к постам"""
     post = models.ForeignKey(
         Post,
         verbose_name='Пост',
-        related_name='comments',
-        on_delete=models.CASCADE
-    )
-    author = models.ForeignKey(
-        User,
-        verbose_name='Автор поста',
-        related_name='comments',
         on_delete=models.CASCADE
     )
     text = models.TextField('Текст', help_text='Текст нового комментария')
-    # created = models.DateTimeField('Дата публикации', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        default_related_name = 'comments'
 
 
 class Follow(models.Model):

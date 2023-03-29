@@ -20,19 +20,27 @@ class IndexView(DataMixin, ListView):
     template_name = 'posts/index.html'
 
     def get_queryset(self):
+        """Переопределение данных, которые будут загружаться"""
         return Post.objects.select_related('group', 'author')
 
 
 class GroupPostView(DataMixin, DetailView, MultipleObjectMixin):
-    """Отображение постов по группам"""
+    """Отображение постов по группам.
+
+     Отображение идет через generic детального
+    просмотра. Но так как у группы может быть много постов, то нужно
+    использовать MultipleObjectMixin, так как изначально DetailView не будет
+    предусматривать отображение множества объектов."""
     model = Group
     allow_empty = False
     template_name = 'posts/group_list.html'
 
     def get_context_data(self, **kwargs):
+        """Переопределение контекста. Главным фигурантом будет модель Posts"""
         object_list = (Post.objects
                        .filter(group=self.get_object())
                        .select_related('author'))
+        # Переопределить object_list
         context = super().get_context_data(object_list=object_list, **kwargs)
         return context
 

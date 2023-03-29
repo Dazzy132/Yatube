@@ -12,6 +12,7 @@ urlpatterns = [
 ]
 
 # https://docs.djangoproject.com/en/2.2/ref/urls/#handler400
+# Работает только если DEBUG=False
 handler404 = 'core.views.page_not_found'
 handler403 = 'core.views.csrf_failure'
 handler500 = 'core.views.internal_server_error'
