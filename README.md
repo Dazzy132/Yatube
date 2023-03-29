@@ -1,7 +1,5 @@
 # Социальная сеть для блогов
 
-[![CI](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml/badge.svg?branch=master)](https://github.com/yandex-praktikum/hw05_final/actions/workflows/python-app.yml)
-
 ### Описание
 Социальная сеть, которая позволяет пользователям делиться записями, заходить на чужие страницы, подписываться на других пользователей и комментировать их записи. Также пользователи могут создавать сообщества по интересам и выкладывать записи в них.
 
